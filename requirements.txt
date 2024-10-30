@@ -1,0 +1,3 @@
+fastapi[standard]
+matplotlib
+scipy

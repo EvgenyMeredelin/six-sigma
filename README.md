@@ -1,0 +1,1 @@
+Simple app to evaluate a process with the SIX SIGMA approach
