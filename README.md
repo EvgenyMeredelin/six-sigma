@@ -3,14 +3,14 @@
 #### Response headers
 ```
 content-disposition: inline; filename=chart.png
-content-length: 202669
+content-length: 323561
 content-type: image/png
-date: Thu,31 Oct 2024 06:59:23 GMT
-process-defect-rate: 0.09133333333333334
-process-fails: 137
+date: Thu,31 Oct 2024 18:00:00 GMT
+process-defect-rate: 0.082
+process-fails: 123
 process-label: YELLOW
-process-name: Yet another process
-process-sigma: 2.8325891531603973
+process-name: Example process
+process-sigma: 2.891743779396325
 process-tests: 1500
 ...
 ```
