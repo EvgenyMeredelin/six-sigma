@@ -97,7 +97,7 @@ class SberProcess(BaseModel):
 
     def plot_sigma_chart(self) -> BytesIO:
         tests, fails, name, defect_rate, sigma, label = (
-            getattr(self, attr_name) for attr_name in self.model_dump()
+            self.model_dump().values()
         )
         xmin, xmax = -3, 6
         x = np.linspace(xmin, xmax, 100*(xmax - xmin) + 1)
