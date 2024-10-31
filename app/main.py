@@ -109,7 +109,7 @@ class SberProcess(BaseModel):
         dr_label = f"Defect rate = {defect_rate * 100:.2f}%"
         aes = {"label": dr_label, "color": label.lower(), "alpha": 0.6}
         norm_label = f"$N(\\mu = {LOC}, \\sigma = 1)$"
-        sigma_annotation = f"$\\sigma$ = {str(sigma)[:5 + (sigma < 0)]}"
+        sigma_annotation = f"$\\sigma$ = {sigma:.3f}"
         name = f", {name=!r}" if name else ""
         title = f"{self.__class__.__name__}({tests=}, {fails=}{name})"
 
