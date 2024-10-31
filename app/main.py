@@ -5,6 +5,7 @@ from typing import Self
 
 # 3rd party modules
 import matplotlib.pyplot as plt
+import mplcyberpunk
 import numpy as np
 from fastapi import (
     BackgroundTasks,
@@ -40,7 +41,7 @@ runtime_config = {
     "font.family": "sans serif"
 }
 plt.rcParams.update(runtime_config)
-plt.style.use("seaborn-v0_8-colorblind")
+plt.style.use("cyberpunk")
 
 
 class SigmaSupremum(Enum):
@@ -107,24 +108,27 @@ class SberProcess(BaseModel):
         xfill = np.linspace(sigma_clamped, xmax)
 
         dr_label = f"Defect rate = {defect_rate * 100:.2f}%"
-        aes = {"label": dr_label, "color": label.lower(), "alpha": 0.6}
+        aes = {"label": dr_label, "color": label.lower(), "alpha": 0.44}
         norm_label = f"$N(\\mu = {LOC}, \\sigma = 1)$"
         sigma_annotation = f"$\\sigma$ = {sigma:.3f}"
         name = f", {name=!r}" if name else ""
         title = f"{self.__class__.__name__}({tests=}, {fails=}{name})"
 
         fig = plt.figure(figsize=(8, 1.8))
-        plt.plot(x, y, lw=1.2, color="k", label=norm_label)
+        plt.plot(x, y, lw=1.2, label=norm_label)
         plt.fill_between(xfill, norm.pdf(xfill), 0, **aes)
-        plt.annotate(sigma_annotation, size=15, xy=(0.75, 0.2))
+        plt.annotate(sigma_annotation, size=15, xy=(0.84, 0.2))
         plt.xlim(xmin, xmax)
-        plt.ylim(0, y.max() + 0.02)
+        plt.ylim(0, y.max() + 0.03)
         plt.xticks(xticks)
         plt.tick_params(axis="both", labelsize=8)
         plt.gca().xaxis.set_major_formatter(FormatStrFormatter("%.2g"))
-        plt.grid(lw=0.5, axis="x", color="gainsboro")
+        plt.grid(lw=0.6, axis="x")
         plt.legend(frameon=True, framealpha=1, loc="upper left")
         plt.title(title)
+
+        mplcyberpunk.make_lines_glow()
+        mplcyberpunk.add_underglow()
 
         image_buffer = BytesIO()
         plt.savefig(image_buffer, bbox_inches="tight", format="png")
