@@ -1,6 +1,6 @@
 ## Simple web app to evaluate a process with the SIX SIGMA approach
 
-### Response headers
+#### Response headers
 ```
 content-disposition: inline; filename=chart.png
 content-length: 202669
@@ -15,5 +15,5 @@ process-tests: 1500
 ...
 ```
 
-### Response body
+#### Response body
 ![plot](assets/chart.png)
