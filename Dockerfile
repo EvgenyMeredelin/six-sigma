@@ -1,5 +1,12 @@
 FROM python:3.12.7-alpine3.20
 
+# https://wiki.alpinelinux.org/wiki/Fonts
+# https://unix.stackexchange.com/questions/438257
+
+RUN apk --no-cache add msttcorefonts-installer fontconfig \
+    && update-ms-fonts \
+    && fc-cache -f
+
 WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt

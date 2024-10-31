@@ -38,7 +38,7 @@ runtime_config = {
     "axes.spines.top": False,
     "axes.titlepad": 15,
     "figure.dpi": 600,
-    "font.family": "sans serif"
+    "font.family": "Arial"
 }
 plt.rcParams.update(runtime_config)
 plt.style.use("cyberpunk")
