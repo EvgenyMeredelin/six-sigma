@@ -29,7 +29,7 @@ from starlette.responses import RedirectResponse
 # mu/loc of the normal continuous random variable
 LOC = 1.5
 
-# normal continuous random variable with loc=1.5 and scale=1 (default)
+# normal continuous random variable with loc=LOC and scale=1 (default)
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html
 norm = norm_rv(LOC)
 
@@ -123,7 +123,7 @@ class SberProcess(BaseModel):
         plt.xticks(xticks)
         plt.tick_params(axis="both", labelsize=8)
         plt.gca().xaxis.set_major_formatter(FormatStrFormatter("%.2g"))
-        plt.grid(lw=0.6, axis="x")
+        plt.grid(lw=0.6)
         plt.legend(frameon=True, framealpha=1, loc="upper left")
         plt.title(title)
 
