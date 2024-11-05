@@ -6,7 +6,7 @@
 "content-length": "323561",
 "content-disposition": "inline; filename=chart.png",
 "date": "Thu, 31 Oct 2024 21:51:56 GMT",
-"process-defect-rate": "0.082",
+"process-defect_rate": "0.082",
 "process-fails": "123",
 "process-label": "YELLOW",
 "process-name": "Example process",

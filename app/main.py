@@ -19,6 +19,7 @@ from matplotlib.ticker import FormatStrFormatter
 from pydantic import (
     BaseModel,
     computed_field,
+    Field,
     model_validator,
     PositiveInt
 )
@@ -64,16 +65,28 @@ class SberProcess(BaseModel):
     Process to evaluate with the SIX SIGMA approach.
     """
 
-    tests: PositiveInt       # total number of tests
-    fails: PositiveInt       # number of tests qualified as failed
-    name: str | None = None  # name of the process (optional)
+    tests: PositiveInt  # total number of tests
+    fails: PositiveInt  # number of tests qualified as failed
+
+    # name of the process (optional)
+    name: str | None = Field(
+        default=None,
+        # The value of the HTTP request header can only contain:
+        # Alphanumeric characters: a-z, A-Z, and 0-9
+        # Special characters: _ :;.,\/"'?!(){}[]@<>=-+*#$&`|~^%
+        # Cloudflare reference: https://tinyurl.com/bdezcran
+        pattern=r"[a-zA-Z0-9 -_:;.,\/\"'?!(){}\[\]@<>=+*#$&`|~^%]+"
+    )
 
     @model_validator(mode="after")
     def prevent_fails_gt_tests(self) -> Self:
         if self.fails > self.tests:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="`fails` can't be greater than `tests`"
+                detail=(
+                    "Number of fails can't be greater than the total"
+                    " number of tests"
+                )
             )
         return self
 
@@ -111,7 +124,7 @@ class SberProcess(BaseModel):
         aes = {"label": dr_label, "color": label.lower(), "alpha": 0.44}
         norm_label = f"$N(\\mu = {LOC}, \\sigma = 1)$"
         sigma_annotation = f"$\\sigma$ = {sigma:.3f}"
-        name = f", {name=!r}" if name else ""
+        name = f", {name=}" if name else ""
         title = f"{self.__class__.__name__}({tests=}, {fails=}{name})"
 
         fig = plt.figure(figsize=(8, 1.8))
@@ -154,8 +167,7 @@ async def sigma_chart_and_data_in_headers(
     headers = {"Content-Disposition": "inline; filename=chart.png"}
 
     for attr_name, value in process.model_dump().items():
-        header = "process-" + attr_name.replace("_", "-")
-        headers[header] = str(value)
+        headers["process-" + attr_name] = str(value)
 
     return Response(
         content=image_buffer.getvalue(),
