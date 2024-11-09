@@ -1,5 +1,10 @@
 ## Simple web app to evaluate a process with the SIX SIGMA approach
 
+#### Request URL
+```
+https://six-sigma.containers.cloud.ru/chart?tests=1500&fails=123&name=Example%20process
+```
+
 #### Response headers
 ```
 "content-type": "image/png",
