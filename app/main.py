@@ -65,8 +65,8 @@ class SberProcess(BaseModel):
     Process to evaluate with the SIX SIGMA approach.
     """
 
-    tests: PositiveInt  # total number of tests
-    fails: PositiveInt  # number of tests qualified as failed
+    tests: PositiveInt     # total number of tests
+    fails: PositiveInt     # number of tests qualified as failed
 
     # name of the process (optional)
     name: str | None = Field(
@@ -127,7 +127,7 @@ class SberProcess(BaseModel):
         name = f", {name=}" if name else ""
         title = f"{self.__class__.__name__}({tests=}, {fails=}{name})"
 
-        fig = plt.figure(figsize=(8, 1.8))
+        fig, ax = plt.subplots(figsize=(8, 1.8))
         plt.plot(x, y, lw=1.2, label=norm_label)
         plt.fill_between(xfill, norm.pdf(xfill), 0, **aes)
         plt.annotate(sigma_annotation, size=15, xy=(0.84, 0.2))
@@ -135,7 +135,7 @@ class SberProcess(BaseModel):
         plt.ylim(0, y.max() + 0.03)
         plt.xticks(xticks)
         plt.tick_params(axis="both", labelsize=8)
-        plt.gca().xaxis.set_major_formatter(FormatStrFormatter("%.2g"))
+        ax.xaxis.set_major_formatter(FormatStrFormatter("%.2g"))
         plt.grid(lw=0.6)
         plt.legend(frameon=True, framealpha=1, loc="upper left")
         plt.title(title)
