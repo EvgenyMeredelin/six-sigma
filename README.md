@@ -21,4 +21,7 @@ https://six-sigma.containers.cloud.ru/chart?tests=1500&fails=123&name=Example%20
 ```
 
 #### Response body
-![plot](assets/chart.png)
+![plot](assets/chart_yellow.png)
+
+#### Another example
+![plot](assets/chart_red.png)
