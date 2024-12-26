@@ -2,7 +2,7 @@
 
 #### Request URL
 ```
-https://six-sigma.containers.cloud.ru/chart?tests=1500&fails=123&name=Example%20process
+https://six-sigma.containerapps.ru/chart?tests=1500&fails=123&name=Example%20process
 ```
 
 #### Response headers
