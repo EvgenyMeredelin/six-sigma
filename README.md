@@ -1,6 +1,6 @@
-## Simple web app to evaluate a process with the SIX SIGMA approach
+## Simple web app to evaluate a process with the "6 Sigma" approach
 
-#### Request URL
+#### Example request
 ```
 https://six-sigma.containerapps.ru/chart?tests=1500&fails=123&name=Example%20process
 ```
