@@ -23,7 +23,7 @@ r = requests.get(url, params=params)
 Image.open(BytesIO(r.content))
 ```
 
-![plot](assets/single.png)
+![plot](assets/single_process.png)
 
 ```python
 data = [
@@ -52,4 +52,4 @@ r = requests.post(url, data=json.dumps(data))
 Image.open(BytesIO(r.content))
 ```
 
-![plot](assets/bulk.png)
+![plot](assets/process_list.png)
