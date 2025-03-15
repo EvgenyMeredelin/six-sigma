@@ -11,9 +11,9 @@ MAX_ROWS: int = 5
 # matplotlib settings
 MPL_RUNTIME_CONFIG: dict[str, Any] = {
     "axes.spines.right": False,
-    "axes.spines.top": False,
-    "figure.dpi": 300,
-    "font.family": "Arial"
+    "axes.spines.top"  : False,
+    "figure.dpi"       : 300,
+    "font.family"      : "Arial"
 }
 
 
