@@ -1,4 +1,9 @@
 import io
+import json
+import math
+import operator
+from dataclasses import dataclass
+from types import NoneType
 
 import matplotlib.pyplot as plt
 import mplcyberpunk
@@ -10,8 +15,12 @@ from scipy.stats import norm as norm_rv
 from .settings import LOC, MPL_RUNTIME_CONFIG
 
 
+# select Anti-Grain Geometry backend to prevent "UserWarning:
+# Starting a Matplotlib GUI outside of the main thread will likely fail."
+# https://matplotlib.org/stable/users/explain/figure/backends.html#backends
 plt.rcParams.update(MPL_RUNTIME_CONFIG)
 plt.style.use("cyberpunk")
+plt.switch_backend("agg")
 
 # normal continuous random variable with loc=LOC and scale=1 (default)
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html
@@ -25,7 +34,8 @@ class Plotter:
 
     def __init__(self, process_list) -> None:
         self.process_list = process_list
-        self.buffer = io.BytesIO()
+        self._buffer      = io.BytesIO()
+        self._dumps       = []
         self._plot_process()
 
     def _plot_process(self) -> None:
@@ -43,9 +53,9 @@ class Plotter:
         xticks = list(range(xmin, xmax + 1)) + [LOC]
 
         for process in self.process_list:
-            tests, fails, name, defect_rate, sigma, label = (
-                process.model_dump().values()
-            )
+            dump = process.model_dump()
+            self._dumps.append(dump)
+            tests, fails, name, defect_rate, sigma, label = dump.values()
             sigma_clamped = max(xmin, min(sigma, xmax))
             xfill = numpy.linspace(sigma_clamped, xmax)
 
@@ -72,14 +82,52 @@ class Plotter:
             mplcyberpunk.make_lines_glow(ax=ax)
             mplcyberpunk.add_underglow(ax=ax)
 
-        plt.savefig(self.buffer, bbox_inches="tight", format="png")
+        plt.savefig(self._buffer, bbox_inches="tight", format="png")
         plt.close(fig)
 
     @property
     def response(self) -> Response:
         """Response with a plot. """
         return Response(
-            content=self.buffer.getvalue(),
-            headers={"Content-Disposition": "inline; filename=plot.png"},
+            content=self._buffer.getvalue(),
+            headers={
+                "Content-Disposition": "inline; filename=plot.png",
+                "Process-List"       : json.dumps(self._dumps)
+            },
             media_type="image/png"
         )
+
+
+class Comparator:
+    """
+    Class implementing field type-sensitive equality test.
+    """
+
+    _compare_funcs = {
+        NoneType: operator.eq,
+        str     : operator.eq,
+        int     : operator.eq,
+        float   : math.isclose
+    }
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, self.__class__):
+            return all(
+                self.__class__._compare_funcs[type(v)](v, other.__dict__[k])
+                for k, v in self.__dict__.items()
+            )
+        return NotImplemented
+
+
+@dataclass(eq=False)
+class ComparableSberProcess(Comparator):
+    """
+    SberProcess dump with field type-sensitive equality test.
+    """
+
+    tests      : int
+    fails      : int
+    defect_rate: float
+    sigma      : float
+    label      : str
+    name       : str | None = None

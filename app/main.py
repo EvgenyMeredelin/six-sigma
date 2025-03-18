@@ -30,7 +30,7 @@ class SberProcess(BaseModel):
     name : str | None = None    # name of the process (optional)
 
     @model_validator(mode="after")
-    def prevent_fails_gt_tests(self) -> Self:
+    def prevent_fails_greater_than_tests(self) -> Self:
         if self.fails > self.tests:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
