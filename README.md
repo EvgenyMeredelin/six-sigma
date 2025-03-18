@@ -1,5 +1,6 @@
 ## Simple web app to evaluate a process with the "6 Sigma" approach
 
+***
 ### Usage
 
 ```python
@@ -19,7 +20,7 @@ url = "https://six-sigma.containerapps.ru/plot"
 params = {
     "tests": 1500,
     "fails": 256,
-    "name": "Example process"
+    "name" : "Example process"
 }
 r = requests.get(url, params=params)
 Image.open(BytesIO(r.content))
@@ -114,6 +115,7 @@ json.loads(r.headers["Process-List"])
 ]
 ```
 
+***
 ### Unit Tests & Coverage
 ```
 $ pytest --cov-report term-missing --cov-report html:htmlcov --cov=.
@@ -139,5 +141,5 @@ TOTAL            198      1    99%
 Coverage HTML written to dir htmlcov
 
 
-=================================== 8 passed in 7.52s ===================================
+=================================== 8 passed in 7.56s ===================================
 ```

@@ -98,29 +98,29 @@ class Plotter:
         )
 
 
-class Comparator:
+class EqMixin:
     """
     Class implementing field type-sensitive equality test.
     """
 
-    _compare_funcs = {
-        NoneType: operator.eq,
+    testers = {
         str     : operator.eq,
         int     : operator.eq,
+        NoneType: operator.eq,
         float   : math.isclose
     }
 
     def __eq__(self, other) -> bool:
         if isinstance(other, self.__class__):
             return all(
-                self.__class__._compare_funcs[type(v)](v, other.__dict__[k])
+                self.__class__.testers[type(v)](v, other.__dict__[k])
                 for k, v in self.__dict__.items()
             )
         return NotImplemented
 
 
 @dataclass(eq=False)
-class ComparableSberProcess(Comparator):
+class ComparableDump(EqMixin):
     """
     SberProcess dump with field type-sensitive equality test.
     """

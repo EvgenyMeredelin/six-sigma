@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 from .main import app, custom_openapi
 from .settings import LOC
-from .tools import ComparableSberProcess
+from .tools import ComparableDump
 
 
 client = TestClient(app)
@@ -22,8 +22,8 @@ def assert_ok(test: Callable) -> Callable:
         assert response.status_code == status.HTTP_200_OK
         actual_dumps = json.loads(response.headers["Process-List"])
         assert all(
-            ComparableSberProcess(**act) == ComparableSberProcess(**exp)
-            for act, exp in zip(actual_dumps, expected_dumps)
+            ComparableDump(**actual) == ComparableDump(**expected)
+            for actual, expected in zip(actual_dumps, expected_dumps)
         )
     return wrapper
 
