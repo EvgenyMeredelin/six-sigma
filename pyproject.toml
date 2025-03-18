@@ -1,0 +1,13 @@
+[project]
+name = "six-sigma"
+version = "0.1.0"
+description = "Simple web app to evaluate a process with the \"6 Sigma\" approach"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.115.11",
+    "matplotlib>=3.10.1",
+    "mplcyberpunk>=0.7.6",
+    "pytest-cov>=6.0.0",
+    "scipy>=1.15.2",
+]
