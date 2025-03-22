@@ -40,7 +40,7 @@ json.loads(r.headers["Process-List"])
         "name": "Example process",
         "defect_rate": 0.17066666666666666,
         "sigma": 2.4515340671620525,
-        "label": "YELLOW",
+        "label": "YELLOW"
     }
 ]
 ```
@@ -86,7 +86,7 @@ json.loads(r.headers["Process-List"])
         "name": "Red class...",
         "defect_rate": 0.274254,
         "sigma": 2.0999973523886952,
-        "label": "RED",
+        "label": "RED"
     },
     {
         "tests": 1000000,
@@ -94,7 +94,7 @@ json.loads(r.headers["Process-List"])
         "name": "...turned Yellow",
         "defect_rate": 0.274253,
         "sigma": 2.1000003533655227,
-        "label": "YELLOW",
+        "label": "YELLOW"
     },
     {
         "tests": 1000000,
@@ -102,7 +102,7 @@ json.loads(r.headers["Process-List"])
         "name": "...is still Yellow",
         "defect_rate": 0.004662,
         "sigma": 4.099940225647758,
-        "label": "YELLOW",
+        "label": "YELLOW"
     },
     {
         "tests": 1000000,
@@ -110,7 +110,7 @@ json.loads(r.headers["Process-List"])
         "name": "...and now it's Green",
         "defect_rate": 0.004661,
         "sigma": 4.10001384285712,
-        "label": "GREEN",
+        "label": "GREEN"
     }
 ]
 ```
