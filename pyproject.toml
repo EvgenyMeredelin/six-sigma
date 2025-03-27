@@ -1,7 +1,7 @@
 [project]
 name = "six-sigma"
 version = "0.1.0"
-description = "Simple web app to evaluate a process with the \"6 Sigma\" approach"
+description = "Simple web app to evaluate a process with the \"6 Sigma\" approach, https://six-sigma.containerapps.ru/"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
