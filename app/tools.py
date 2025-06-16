@@ -1,18 +1,27 @@
 import io
 import json
+import logging
 import math
 import operator
 from dataclasses import dataclass
 from types import NoneType
 
+import logfire
 import matplotlib.pyplot as plt
 import mplcyberpunk
 import numpy
+from decouple import config
 from fastapi import Response
 from matplotlib.ticker import FormatStrFormatter
 from scipy.stats import norm as norm_rv
 
 from .settings import LOC, MPL_RUNTIME_CONFIG
+
+
+logfire.configure(token=config("LOGFIRE_SIXSIGMA"))
+logging.basicConfig(handlers=[logfire.LogfireLoggingHandler()])
+logger = logging.getLogger("sixsigma_logger")
+logger.setLevel(logging.DEBUG)
 
 
 # select Anti-Grain Geometry backend to prevent "UserWarning:
@@ -88,11 +97,13 @@ class Plotter:
     @property
     def response(self) -> Response:
         """Response with a plot. """
+        process_list = json.dumps(self._dumps)
+        logger.info(process_list)
         return Response(
             content=self._buffer.getvalue(),
             headers={
                 "Content-Disposition": "inline; filename=plot.png",
-                "Process-List"       : json.dumps(self._dumps)
+                "Process-List"       : process_list
             },
             media_type="image/png"
         )
