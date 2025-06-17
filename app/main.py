@@ -1,13 +1,13 @@
 from functools import cached_property
 from typing import Self
 
+import logfire
 from fastapi import (
     Depends,
     FastAPI,
     HTTPException,
     status
 )
-from fastapi.openapi.utils import get_openapi
 from pydantic import (
     BaseModel,
     computed_field,
@@ -61,32 +61,23 @@ class SberProcess(BaseModel):
         return "GREEN"
 
 
-app = FastAPI()
-
-
-def custom_openapi():
-    """
-    Generate the OpenAPI custom schema of the application.
-    https://fastapi.tiangolo.com/how-to/extending-openapi/#extending-openapi
-    """
-    if app.openapi_schema:
-        return app.openapi_schema
-
-    openapi_schema = get_openapi(
-        title="Six Sigma",
-        version="0.1.0",
-        routes=app.routes,
-        contact={
-            "name" : "Evgeny Meredelin",
-            "email": "eimeredelin@sberbank.ru"
-        }
-    )
-
-    app.openapi_schema = openapi_schema
-    return openapi_schema
-
-
-app.openapi = custom_openapi
+app = FastAPI(
+    title="Six Sigma",
+    description=(
+        "Simple web app to evaluate a process "
+        "with the \"6 Sigma\" approach"
+    ),
+    version="0.1.0",
+    contact={
+        "name" : "Evgeny Meredelin",
+        "email": "eimeredelin@sberbank.ru"
+    }
+)
+logfire.instrument_fastapi(
+    app=app,
+    capture_headers=True,
+    record_send_receive=True
+)
 
 
 @app.get("/")

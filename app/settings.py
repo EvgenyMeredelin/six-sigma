@@ -12,9 +12,13 @@ MAX_ROWS: int = 5
 MPL_RUNTIME_CONFIG: dict[str, Any] = {
     "axes.spines.right": False,
     "axes.spines.top"  : False,
-    "figure.dpi"       : 300,
+    # "figure.dpi"       : 300,
     "font.family"      : "Arial"
 }
+
+# figure dpi
+DPI_SINGLE: int = 300
+DPI_LIST  : int = 120
 
 
 class SigmaSupremum(Enum):

@@ -1,27 +1,18 @@
 import io
 import json
-import logging
 import math
 import operator
 from dataclasses import dataclass
 from types import NoneType
 
-import logfire
 import matplotlib.pyplot as plt
 import mplcyberpunk
 import numpy
-from decouple import config
 from fastapi import Response
 from matplotlib.ticker import FormatStrFormatter
 from scipy.stats import norm as norm_rv
 
-from .settings import LOC, MPL_RUNTIME_CONFIG
-
-
-logfire.configure(token=config("LOGFIRE_SIXSIGMA"))
-logging.basicConfig(handlers=[logfire.LogfireLoggingHandler()])
-logger = logging.getLogger("sixsigma_logger")
-logger.setLevel(logging.DEBUG)
+from .settings import DPI_SINGLE, DPI_LIST, LOC, MPL_RUNTIME_CONFIG
 
 
 # select Anti-Grain Geometry backend to prevent "UserWarning:
@@ -43,15 +34,17 @@ class Plotter:
 
     def __init__(self, process_list) -> None:
         self.process_list = process_list
-        self._buffer      = io.BytesIO()
-        self._dumps       = []
+        self._buffer = io.BytesIO()
+        self._dumps = []
         self._plot_process()
 
     def _plot_process(self) -> None:
         """Plot sigma and defect rate of a process. """
         nrows = len(self.process_list)
         fig, ax = plt.subplots(
-            nrows=nrows, figsize=(8, 2.2*nrows), squeeze=False
+            nrows=nrows, figsize=(8, 2.2*nrows), squeeze=False,
+            # high dpi rate crashes cloud.ru container app
+            dpi=DPI_SINGLE if nrows == 1 else DPI_LIST
         )
         plt.subplots_adjust(hspace=0.5)
         ax_iter = ax.flat
@@ -97,13 +90,11 @@ class Plotter:
     @property
     def response(self) -> Response:
         """Response with a plot. """
-        process_list = json.dumps(self._dumps)
-        logger.info(process_list)
         return Response(
             content=self._buffer.getvalue(),
             headers={
                 "Content-Disposition": "inline; filename=plot.png",
-                "Process-List"       : process_list
+                "Process-List"       : json.dumps(self._dumps)
             },
             media_type="image/png"
         )

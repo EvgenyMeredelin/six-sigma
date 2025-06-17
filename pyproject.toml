@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.115.11",
-    "logfire>=3.19.0",
+    "logfire[fastapi]>=3.19.0",
     "matplotlib>=3.10.1",
     "mplcyberpunk>=0.7.6",
     "pytest-cov>=6.0.0",

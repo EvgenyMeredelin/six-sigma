@@ -46,4 +46,7 @@ ENTRYPOINT []
 # https://fastapi.tiangolo.com/deployment/docker/#use-cmd-exec-form
 # Cloud.ru Container Apps requirement:
 # do not run container on port 8012, 8013, 8022, 8112, 9090, 9091, 1-1024
-CMD ["fastapi", "run", "app/main.py", "--port", "1703"]
+# CMD ["fastapi", "run", "app/main.py", "--port", "1703"]
+
+# https://logfire.pydantic.dev/docs/guides/onboarding-checklist/add-auto-tracing/
+CMD ["python", "logfire_auto_tracing.py"]
