@@ -43,7 +43,7 @@ class Plotter:
         nrows = len(self.process_list)
         fig, ax = plt.subplots(
             nrows=nrows, figsize=(8, 2.2*nrows), squeeze=False,
-            # high dpi rate crashes cloud.ru container app
+            # large image crashes cloud.ru container app
             dpi=DPI_SINGLE if nrows == 1 else DPI_LIST
         )
         plt.subplots_adjust(hspace=0.5)
