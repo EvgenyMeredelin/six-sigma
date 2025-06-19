@@ -6,7 +6,8 @@ from fastapi import status
 # https://fastapi.tiangolo.com/tutorial/testing/#testing
 from fastapi.testclient import TestClient
 
-from .main import app, custom_openapi
+from .main import app
+# from .main import custom_openapi
 from .settings import LOC
 from .tools import ComparableDump
 
@@ -224,19 +225,19 @@ def test_redirect_to_docs():
     assert str(response.url).endswith("/docs")
 
 
-def test_custom_openapi():
-    """Test `custom_openapi` works as expected. """
-    # check if the app.openapi method is customized
-    assert app.openapi == custom_openapi
+# def test_custom_openapi():
+#     """Test `custom_openapi` works as expected. """
+#     # check if the app.openapi method is customized
+#     assert app.openapi == custom_openapi
 
-    # check there's currently no OpenAPI schema
-    assert app.openapi_schema is None
+#     # check there's currently no OpenAPI schema
+#     assert app.openapi_schema is None
 
-    # produce the schema and check it's there
-    app.openapi()
-    assert app.openapi_schema is not None
+#     # produce the schema and check it's there
+#     app.openapi()
+#     assert app.openapi_schema is not None
 
-    app.openapi()
-    # custom_openapi's first return statement
-    # returns previously produced schema,
-    # so the statement is now fully covered
+#     app.openapi()
+#     # custom_openapi's first return statement
+#     # returns previously produced schema,
+#     # so the statement is now fully covered

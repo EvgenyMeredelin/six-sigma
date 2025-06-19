@@ -1,11 +1,14 @@
+# standard library
 from functools import cached_property
-from typing import Annotated, Self
+from typing import Annotated, Literal, Self
 
+# third-party libraries
 import logfire
 from fastapi import (
     Depends,
     FastAPI,
     HTTPException,
+    Path,
     status
 )
 from pydantic import (
@@ -17,8 +20,12 @@ from pydantic import (
 )
 from starlette.responses import RedirectResponse
 
+# user modules
 from .settings import MAX_ROWS, SigmaSupremum
-from .tools import norm, Plotter
+from .tools import mode_handlers, norm
+
+
+Mode = Literal[tuple(mode_handlers)]
 
 
 class SberProcess(BaseModel):
@@ -90,21 +97,33 @@ logfire.instrument_fastapi(
 )
 
 
+def handle_request(
+    mode: Mode,  # type: ignore
+    proc: SberProcess | list[SberProcess]
+):
+    proc = (
+        [proc] if isinstance(proc, SberProcess)
+        else proc[:MAX_ROWS]
+    )
+    return mode_handlers[mode](proc)
+
+
 @app.get("/")
 async def redirect_from_root_to_docs():
     return RedirectResponse(url="/docs")
 
 
-@app.get("/plot")
-def plot_single_process(
-    process: Annotated[SberProcess, Depends()],
-    only_data: bool = False
+@app.get("/{mode}")
+def single(
+    mode: Annotated[Mode, Path()],  # type: ignore
+    process: Annotated[SberProcess, Depends()]
 ):
-    if only_data:
-        return process
-    return Plotter([process]).response
+    return handle_request(mode, process)
 
 
-@app.post("/plot")
-def plot_process_list(process_list: list[SberProcess]):
-    return Plotter(process_list[:MAX_ROWS]).response
+@app.post("/{mode}")
+def bulk(
+    mode: Annotated[Mode, Path()],  # type: ignore
+    process_bulk: list[SberProcess]
+):
+    return handle_request(mode, process_bulk)

@@ -119,27 +119,27 @@ json.loads(r.headers["Process-List"])
 ### Unit Tests & Coverage
 ```
 $ pytest --cov-report term-missing --cov-report html:htmlcov --cov=.
-================================== test session starts ==================================
+============================ test session starts =============================
 platform win32 -- Python 3.13.2, pytest-8.3.5, pluggy-1.5.0
 rootdir: D:\git\six-sigma
 configfile: pytest.ini
-plugins: anyio-4.9.0, cov-6.0.0
-collected 8 items
+plugins: anyio-4.9.0, logfire-3.19.0, cov-6.0.0
+collected 7 items
 
-app\test_main.py ........                                                          [100%]
+test_main.py .......                                                    [100%]
 
 ---------- coverage: platform win32, python 3.13.2-final-0 -----------
-Name               Stmts   Miss  Cover   Missing
-------------------------------------------------
-app\__init__.py        0      0   100%
-app\main.py           49      0   100%
-app\settings.py        8      0   100%
-app\test_main.py      64      0   100%
-app\tools.py          77      1    99%   119
-------------------------------------------------
-TOTAL                198      1    99%
+Name           Stmts   Miss  Cover   Missing
+--------------------------------------------
+__init__.py        0      0   100%
+main.py           45      0   100%
+settings.py       10      0   100%
+test_main.py      58      0   100%
+tools.py          72      1    99%   118
+--------------------------------------------
+TOTAL            185      1    99%
 Coverage HTML written to dir htmlcov
 
 
-=================================== 8 passed in 5.43s ===================================
+============================= 7 passed in 5.04s ==============================
 ```
