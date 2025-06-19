@@ -1,5 +1,5 @@
 from functools import cached_property
-from typing import Self
+from typing import Annotated, Self
 
 import logfire
 from fastapi import (
@@ -10,6 +10,7 @@ from fastapi import (
 )
 from pydantic import (
     BaseModel,
+    Field,
     computed_field,
     model_validator,
     PositiveInt
@@ -25,9 +26,18 @@ class SberProcess(BaseModel):
     Process to evaluate with the "6 Sigma" approach.
     """
 
-    tests: PositiveInt          # total number of tests
-    fails: PositiveInt          # number of tests qualified as failed
-    name : str | None = None    # name of the process (optional)
+    tests: Annotated[
+        PositiveInt,
+        Field(description="Total number of tests")
+    ]
+    fails: Annotated[
+        PositiveInt,
+        Field(description="Number of tests qualified as failed")
+    ]
+    name: Annotated[
+        str | None,
+        Field(description="Name of the process (optional)")
+    ] = None
 
     @model_validator(mode="after")
     def prevent_fails_greater_than_tests(self) -> Self:
@@ -86,10 +96,20 @@ async def redirect_from_root_to_docs():
 
 
 @app.get("/plot")
-async def plot_single_process(process: SberProcess = Depends()):
+async def plot_single_process(
+    process: Annotated[SberProcess, Depends()],
+    only_data: bool = False
+):
+    if only_data:
+        return process
     return Plotter([process]).response
 
 
 @app.post("/plot")
-async def plot_process_list(process_list: list[SberProcess]):
+async def plot_process_list(
+    process_list: list[SberProcess],
+    only_data: bool = False
+):
+    if only_data:
+        return process_list
     return Plotter(process_list[:MAX_ROWS]).response
