@@ -96,7 +96,7 @@ async def redirect_from_root_to_docs():
 
 
 @app.get("/plot")
-async def plot_single_process(
+def plot_single_process(
     process: Annotated[SberProcess, Depends()],
     only_data: bool = False
 ):
@@ -106,10 +106,5 @@ async def plot_single_process(
 
 
 @app.post("/plot")
-async def plot_process_list(
-    process_list: list[SberProcess],
-    only_data: bool = False
-):
-    if only_data:
-        return process_list
+def plot_process_list(process_list: list[SberProcess]):
     return Plotter(process_list[:MAX_ROWS]).response
