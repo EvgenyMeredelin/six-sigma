@@ -94,9 +94,6 @@ def plot_sigma(process_bulk) -> Response:
     )
 
 
-mode_handlers = {"data": lambda proc: proc, "plot": plot_sigma}
-
-
 class EqMixin:
     """
     Class implementing field type aware equality test.

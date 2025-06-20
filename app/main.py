@@ -22,9 +22,16 @@ from starlette.responses import RedirectResponse
 
 # user modules
 from .settings import MAX_ROWS, SigmaSupremum
-from .tools import mode_handlers, norm
+from .tools import norm, plot_sigma
 
 
+# valid `mode` path parameters and their respective handlers
+mode_handlers = {
+    # data-only option, process(-es) enriched with computed fields
+    "data": lambda process_list: process_list,
+    # image as binary output and data in the "Process-List" header
+    "plot": plot_sigma
+}
 Mode = Literal[tuple(mode_handlers)]
 
 
@@ -99,9 +106,10 @@ logfire.instrument_fastapi(
 
 def handle_request(
     mode: Mode,  # type: ignore
-    proc: list[SberProcess]
+    # either single process in the list or a bulk
+    process_list: list[SberProcess]
 ):
-    return mode_handlers[mode](proc[:MAX_ROWS])
+    return mode_handlers[mode](process_list)
 
 
 @app.get("/")
@@ -122,4 +130,4 @@ def bulk(
     mode: Annotated[Mode, Path()],  # type: ignore
     process_bulk: list[SberProcess]
 ):
-    return handle_request(mode, process_bulk)
+    return handle_request(mode, process_bulk[:MAX_ROWS])
