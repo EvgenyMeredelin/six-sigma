@@ -90,22 +90,18 @@ app = FastAPI(
         "email": "eimeredelin@sberbank.ru"
     }
 )
-logfire.instrument_fastapi(
-    app=app,
-    capture_headers=True,
-    record_send_receive=True
-)
+# logfire.instrument_fastapi(
+#     app=app,
+#     capture_headers=True,
+#     record_send_receive=True
+# )
 
 
 def handle_request(
     mode: Mode,  # type: ignore
-    proc: SberProcess | list[SberProcess]
+    proc: list[SberProcess]
 ):
-    proc = (
-        [proc] if isinstance(proc, SberProcess)
-        else proc[:MAX_ROWS]
-    )
-    return mode_handlers[mode](proc)
+    return mode_handlers[mode](proc[:MAX_ROWS])
 
 
 @app.get("/")
@@ -118,7 +114,7 @@ def single(
     mode: Annotated[Mode, Path()],  # type: ignore
     process: Annotated[SberProcess, Depends()]
 ):
-    return handle_request(mode, process)
+    return handle_request(mode, [process])
 
 
 @app.post("/{mode}")
