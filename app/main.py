@@ -104,11 +104,11 @@ app = FastAPI(
         "email": "eimeredelin@sberbank.ru"
     }
 )
-# logfire.instrument_fastapi(
-#     app=app,
-#     capture_headers=True,
-#     record_send_receive=True
-# )
+logfire.instrument_fastapi(
+    app=app,
+    capture_headers=True,
+    record_send_receive=True
+)
 
 
 def handle_request(
