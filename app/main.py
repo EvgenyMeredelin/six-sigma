@@ -1,4 +1,5 @@
 # standard library
+import math
 from functools import cached_property
 from typing import Annotated, Literal, Self
 
@@ -16,6 +17,7 @@ from pydantic import (
     Field,
     computed_field,
     model_validator,
+    NonNegativeInt,
     PositiveInt
 )
 from starlette.responses import RedirectResponse
@@ -45,7 +47,7 @@ class SberProcess(BaseModel):
         Field(description="Total number of tests")
     ]
     fails: Annotated[
-        PositiveInt,
+        NonNegativeInt,
         Field(description="Number of tests qualified as failed")
     ]
     name: Annotated[
@@ -72,17 +74,22 @@ class SberProcess(BaseModel):
 
     @computed_field
     @cached_property
-    def sigma(self) -> float:
+    def sigma(self) -> float | str:
         # percent point function
-        return norm.ppf(1 - self.defect_rate).item()
+        value = norm.ppf(1 - self.defect_rate).item()
+        # out of range float values are not JSON compliant
+        if math.isinf(value):
+            return "-inf" if value < 0 else "inf"
+        return value
 
     @computed_field
     @cached_property
     def label(self) -> str:
+        sigma = float(self.sigma)
         for supremum in SigmaSupremum:
-            if self.sigma < supremum.value:
+            if sigma < supremum.value:
                 return supremum.name
-        return "GREEN"
+        return supremum.name
 
 
 app = FastAPI(
@@ -97,11 +104,11 @@ app = FastAPI(
         "email": "eimeredelin@sberbank.ru"
     }
 )
-logfire.instrument_fastapi(
-    app=app,
-    capture_headers=True,
-    record_send_receive=True
-)
+# logfire.instrument_fastapi(
+#     app=app,
+#     capture_headers=True,
+#     record_send_receive=True
+# )
 
 
 def handle_request(

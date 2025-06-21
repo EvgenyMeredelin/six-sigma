@@ -9,7 +9,7 @@ from types import NoneType
 # third-party libraries
 import matplotlib.pyplot as plt
 import mplcyberpunk
-import numpy
+import numpy as np
 from fastapi import Response
 from matplotlib.ticker import FormatStrFormatter
 from scipy.stats import norm as norm_rv
@@ -47,7 +47,7 @@ def plot_sigma(process_bulk) -> Response:
     ax_iter = ax.flat
 
     xmin, xmax = -3, 6
-    x = numpy.linspace(xmin, xmax, 100*(xmax - xmin) + 1)
+    x = np.linspace(xmin, xmax, 100*(xmax - xmin) + 1)
     y = norm.pdf(x)  # probability density function
     xticks = list(range(xmin, xmax + 1)) + [LOC]
 
@@ -55,8 +55,9 @@ def plot_sigma(process_bulk) -> Response:
         dump = process.model_dump()
         all_dumps.append(dump)
         tests, fails, name, defect_rate, sigma, label = dump.values()
-        sigma_clamped = max(xmin, min(sigma, xmax))
-        xfill = numpy.linspace(sigma_clamped, xmax)
+        sigma = float(sigma)  # if sigma is -inf/+inf
+        sigma_clipped = np.clip(sigma, xmin, xmax)
+        xfill = np.linspace(sigma_clipped, xmax)
 
         dr_label = f"Defect rate = {defect_rate * 100:.2f}%"
         aes = {"label": dr_label, "color": label.lower(), "alpha": 0.44}

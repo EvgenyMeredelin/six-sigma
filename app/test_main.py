@@ -1,14 +1,14 @@
+# standard library
 import json
 from collections.abc import Callable
 from functools import wraps
 
+# third-party libraries
 from fastapi import status
-# https://fastapi.tiangolo.com/tutorial/testing/#testing
 from fastapi.testclient import TestClient
 
+# user modules
 from .main import app
-# from .main import custom_openapi
-from .settings import LOC
 from .tools import ComparableDump
 
 
@@ -40,24 +40,17 @@ def assert_nok(test: Callable) -> Callable:
 
 
 @assert_nok
-def test_zero_tests_zero_fails():
-    """Single process. tests = 0, fails = 0. """
+def test_no_tests_performed():
+    """Single process. tests = 0. """
     response = client.get(
         url="/plot",
-        params={"tests": 0, "fails": 0}
+        params={"tests": 0, "fails": 100}
     )
     expected_response_body = {
         "detail": [
             {
                 "type" : "greater_than",
                 "loc"  : ["query", "tests"],
-                "msg"  : "Input should be greater than 0",
-                "input": "0",
-                "ctx"  : {"gt": 0}
-            },
-            {
-                "type" : "greater_than",
-                "loc"  : ["query", "fails"],
                 "msg"  : "Input should be greater than 0",
                 "input": "0",
                 "ctx"  : {"gt": 0}
@@ -84,11 +77,11 @@ def test_negative_tests_negative_fails():
                 "ctx"  : {"gt": 0}
             },
             {
-                "type" : "greater_than",
+                "type" : "greater_than_equal",
                 "loc"  : ["query", "fails"],
-                "msg"  : "Input should be greater than 0",
+                "msg"  : "Input should be greater than or equal to 0",
                 "input": "-25",
-                "ctx"  : {"gt": 0}
+                "ctx"  : {"ge": 0}
             }
         ]
     }
@@ -139,15 +132,55 @@ def test_float_coercible_to_integer():
     """Single process. tests and fails are floats coercible to integer. """
     response = client.get(
         url="/plot",
-        params={"tests": 50.0, "fails": 25.0}
+        params={"tests": 50, "fails": 25}
     )
     expected_dumps = [
         {
             "tests"      : 50,
             "fails"      : 25,
             "defect_rate": 0.5,
-            "sigma"      : LOC,
+            "sigma"      : 1.5,
             "label"      : "RED"
+        }
+    ]
+    return response, expected_dumps
+
+
+@assert_ok
+def test_fails_equals_tests():
+    """Single process. All tests failed. """
+    response = client.get(
+        url="/plot",
+        params={"tests": 100, "fails": 100}
+    )
+    expected_dumps = [
+        {
+            "tests"      : 100,
+            "fails"      : 100,
+            "name"       : None,
+            "defect_rate": 1,
+            "sigma"      : "-inf",
+            "label"      : "RED"
+        }
+    ]
+    return response, expected_dumps
+
+
+@assert_ok
+def test_no_tests_failed():
+    """Single process. No tests failed. """
+    response = client.get(
+        url="/plot",
+        params={"tests": 100, "fails": 0}
+    )
+    expected_dumps = [
+        {
+            "tests"      : 100,
+            "fails"      : 0,
+            "name"       : None,
+            "defect_rate": 0,
+            "sigma"      : "inf",
+            "label"      : "GREEN"
         }
     ]
     return response, expected_dumps
@@ -223,21 +256,3 @@ def test_redirect_to_docs():
     response = client.get("/")
     assert response.status_code == status.HTTP_200_OK
     assert str(response.url).endswith("/docs")
-
-
-# def test_custom_openapi():
-#     """Test `custom_openapi` works as expected. """
-#     # check if the app.openapi method is customized
-#     assert app.openapi == custom_openapi
-
-#     # check there's currently no OpenAPI schema
-#     assert app.openapi_schema is None
-
-#     # produce the schema and check it's there
-#     app.openapi()
-#     assert app.openapi_schema is not None
-
-#     app.openapi()
-#     # custom_openapi's first return statement
-#     # returns previously produced schema,
-#     # so the statement is now fully covered
