@@ -24,7 +24,7 @@ from starlette.responses import RedirectResponse
 
 # user modules
 from .settings import MAX_ROWS, SigmaSupremum
-from .tools import norm, plot_sigma
+from .tools import norm_rv, plot_sigma
 
 
 # valid `mode` path parameters and their respective handlers
@@ -76,7 +76,7 @@ class SberProcess(BaseModel):
     @cached_property
     def sigma(self) -> float | str:
         # percent point function
-        value = norm.ppf(1 - self.defect_rate).item()
+        value = norm_rv.ppf(1 - self.defect_rate).item()
         # out of range float values are not JSON compliant
         if math.isinf(value):
             return "-inf" if value < 0 else "inf"
@@ -85,11 +85,12 @@ class SberProcess(BaseModel):
     @computed_field
     @cached_property
     def label(self) -> str:
+        # if sigma in {"-inf", "inf"}
         sigma = float(self.sigma)
-        for supremum in SigmaSupremum:
-            if sigma < supremum.value:
-                return supremum.name
-        return supremum.name
+        for sup in SigmaSupremum:
+            if sigma < sup.value:
+                return sup.name
+        return sup.name
 
 
 app = FastAPI(
@@ -104,11 +105,11 @@ app = FastAPI(
         "email": "eimeredelin@sberbank.ru"
     }
 )
-logfire.instrument_fastapi(
-    app=app,
-    capture_headers=True,
-    record_send_receive=True
-)
+# logfire.instrument_fastapi(
+#     app=app,
+#     capture_headers=True,
+#     record_send_receive=True
+# )
 
 
 def handle_request(

@@ -12,12 +12,13 @@ MAX_ROWS: int = 5
 MPL_RUNTIME_CONFIG: dict[str, Any] = {
     "axes.spines.right": False,
     "axes.spines.top"  : False,
-    "font.family"      : "Arial"
+    "font.family"      : "Arial",
+    "mathtext.fontset" : "custom"
 }
 
 # matplotlib figure dpi
+DPI_BULK  : int = 120
 DPI_SINGLE: int = 300
-DPI_LIST  : int = 120
 
 
 class SigmaSupremum(Enum):

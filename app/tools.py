@@ -12,10 +12,10 @@ import mplcyberpunk
 import numpy as np
 from fastapi import Response
 from matplotlib.ticker import FormatStrFormatter
-from scipy.stats import norm as norm_rv
+from scipy import stats
 
 # user modules
-from .settings import DPI_SINGLE, DPI_LIST, LOC, MPL_RUNTIME_CONFIG
+from .settings import DPI_SINGLE, DPI_BULK, LOC, MPL_RUNTIME_CONFIG
 
 
 # select Anti-Grain Geometry backend to prevent "UserWarning:
@@ -27,7 +27,7 @@ plt.switch_backend("agg")
 
 # normal continuous random variable with loc=LOC and scale=1 (default)
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html
-norm = norm_rv(LOC)
+norm_rv = stats.norm(LOC)
 
 
 def plot_sigma(process_bulk) -> Response:
@@ -40,22 +40,22 @@ def plot_sigma(process_bulk) -> Response:
     nrows = len(process_bulk)
     fig, ax = plt.subplots(
         nrows=nrows, figsize=(8, 2.2*nrows), squeeze=False,
-        # large image crashes cloud.ru container app
-        dpi=DPI_SINGLE if nrows == 1 else DPI_LIST
+        # large image crashes Cloud.ru container app
+        dpi=DPI_SINGLE if nrows == 1 else DPI_BULK
     )
     plt.subplots_adjust(hspace=0.5)
     ax_iter = ax.flat
 
     xmin, xmax = -3, 6
     x = np.linspace(xmin, xmax, 100*(xmax - xmin) + 1)
-    y = norm.pdf(x)  # probability density function
+    y = norm_rv.pdf(x)  # probability density function
     xticks = list(range(xmin, xmax + 1)) + [LOC]
 
     for process in process_bulk:
         dump = process.model_dump()
         all_dumps.append(dump)
         tests, fails, name, defect_rate, sigma, label = dump.values()
-        sigma = float(sigma)  # if sigma is -inf/+inf
+        sigma = float(sigma)  # if sigma in {"-inf", "inf"}
         sigma_clipped = np.clip(sigma, xmin, xmax)
         xfill = np.linspace(sigma_clipped, xmax)
 
@@ -68,7 +68,7 @@ def plot_sigma(process_bulk) -> Response:
 
         ax = next(ax_iter)
         ax.plot(x, y, lw=1.2, label=norm_label)
-        ax.fill_between(xfill, norm.pdf(xfill), 0, **aes)
+        ax.fill_between(xfill, norm_rv.pdf(xfill), 0, **aes)
         ax.annotate(sigma_annotation, size=15, xy=(0.84, 0.2))
         ax.set_xlim(xmin, xmax)
         ax.set_ylim(0, y.max() + 0.03)

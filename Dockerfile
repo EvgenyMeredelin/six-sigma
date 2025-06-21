@@ -21,8 +21,7 @@ WORKDIR /code
 # https://wiki.alpinelinux.org/wiki/Fonts
 # https://unix.stackexchange.com/questions/438257
 RUN apk --no-cache add msttcorefonts-installer fontconfig \
-    && update-ms-fonts \
-    && fc-cache -f
+    && update-ms-fonts && fc-cache -f
 
 # Install the project's dependencies using the lockfile and settings
 RUN --mount=type=cache,target=/root/.cache/uv \

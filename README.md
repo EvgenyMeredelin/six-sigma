@@ -31,7 +31,7 @@ r = requests.get(url, params=params)
 Image.open(BytesIO(r.content))
 ```
 
-![plot](assets/single_process.png)
+![plot](assets/single.png)
 
 ```python
 json.loads(r.headers["Process-List"])
@@ -77,7 +77,7 @@ r = requests.post(url, data=json.dumps(data))
 Image.open(BytesIO(r.content))
 ```
 
-![plot](assets/process_list.png)
+![plot](assets/bulk.png)
 
 ```python
 json.loads(r.headers["Process-List"])
@@ -123,15 +123,24 @@ json.loads(r.headers["Process-List"])
 ***
 ### Unit Tests & Coverage
 ```
-$ pytest --cov-report term-missing --cov-report html:htmlcov --cov=.
-=================================== test session starts ====================================
-platform win32 -- Python 3.13.2, pytest-8.3.5, pluggy-1.5.0
+$ pytest --cov-report term-missing --cov-report html:htmlcov --cov=. -vv
+=============================== test session starts ================================
+platform win32 -- Python 3.13.2, pytest-8.3.5, pluggy-1.5.0 -- D:\git\six-sigma\.venv\Scripts\python.exe
+cachedir: .pytest_cache
 rootdir: D:\git\six-sigma
 configfile: pytest.ini
 plugins: anyio-4.9.0, logfire-3.19.0, cov-6.0.0
 collected 9 items
 
-test_main.py .........                                                                [100%]
+test_main.py::test_no_tests_performed PASSED                                  [ 11%]
+test_main.py::test_negative_tests_negative_fails PASSED                       [ 22%]
+test_main.py::test_fails_greater_than_tests PASSED                            [ 33%]
+test_main.py::test_string_tests_string_fails PASSED                           [ 44%]
+test_main.py::test_float_coercible_to_integer PASSED                          [ 55%]
+test_main.py::test_fails_equals_tests PASSED                                  [ 66%]
+test_main.py::test_no_tests_failed PASSED                                     [ 77%]
+test_main.py::test_fails_thresholds_for_one_million_tests PASSED              [ 88%]
+test_main.py::test_redirect_to_docs PASSED                                    [100%]
 
 ---------- coverage: platform win32, python 3.13.2-final-0 -----------
 Name           Stmts   Miss  Cover   Missing
@@ -146,5 +155,5 @@ TOTAL            201      1    99%
 Coverage HTML written to dir htmlcov
 
 
-==================================== 9 passed in 5.73s =====================================
+================================ 9 passed in 5.60s =================================
 ```

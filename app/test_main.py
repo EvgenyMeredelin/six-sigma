@@ -157,7 +157,6 @@ def test_fails_equals_tests():
         {
             "tests"      : 100,
             "fails"      : 100,
-            "name"       : None,
             "defect_rate": 1,
             "sigma"      : "-inf",
             "label"      : "RED"
@@ -177,7 +176,6 @@ def test_no_tests_failed():
         {
             "tests"      : 100,
             "fails"      : 0,
-            "name"       : None,
             "defect_rate": 0,
             "sigma"      : "inf",
             "label"      : "GREEN"
