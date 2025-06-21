@@ -16,6 +16,7 @@ from PIL import Image
 url = "https://six-sigma.containerapps.ru/plot"
 
 # data-only option, process(-es) enriched with computed fields
+# see also https://github.com/EvgenyMeredelin/six-sigma-typer
 url = "https://six-sigma.containerapps.ru/data"
 ```
 
